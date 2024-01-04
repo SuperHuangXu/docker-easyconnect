@@ -1,13 +1,21 @@
 #!/bin/bash
+echo $VPN_TYPE &&
+echo $VPN_DEB_PATH &&
 echo "$VPN_TYPE" > /etc/vpn-type &&
 cd /tmp &&
 . ./build-scripts/get-echost-names.sh &&
 if [ -z "${VPN_DEB_PATH}" ]; then
 	busybox wget "${VPN_URL}" -O VPN.deb
 else
-	busybox wget "${VPN_URL}" -O VPN.zip &&
-	busybox unzip -p VPN.zip "${VPN_DEB_PATH}" > VPN.deb &&
-	rm VPN.zip
+	busybox wget "${VPN_URL}" -O "${VPN_DEB_PATH}" &&
+	echo "------" &&
+	ls &&
+	echo "------" &&
+	busybox mv "${VPN_DEB_PATH}" VPN.deb &&
+	echo "------" &&
+	ls &&
+	echo "------"
+	# rm VPN.zip
 fi &&
 dpkg-deb -R VPN.deb / &&
 package_name=$(echo $(grep -Po '(?<=Package:).*' /DEBIAN/control)) &&
